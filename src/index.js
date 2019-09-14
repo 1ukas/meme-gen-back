@@ -6,13 +6,13 @@ const expressFormidable = require('express-formidable');
 
 const app = express();
 
-const imageGen = require('./routes/imageGen');
+const memeData = require('./routes/memeData');
 
 app.use(cors());
 app.use(expressFormidable());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(imageGen);
+app.use(memeData);
 
 // Handle 404:
 app.use((req, res, next) => {
