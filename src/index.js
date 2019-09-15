@@ -14,6 +14,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(memeData);
 
+// Handle root page:
+app.get('/', (req, res, next) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
 // Handle 404:
 app.use((req, res, next) => {
     res.status(404).sendFile(path.join(__dirname, '../public/404.html'));
