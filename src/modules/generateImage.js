@@ -44,10 +44,10 @@ module.exports.generateImage = (data, callback) => {
                 alignmentX: jimp.HORIZONTAL_ALIGN_CENTER
             }, marginedWidth, imageHeight)
         })
-        .then(image => (image.quality(100).write('imgExported.jpeg')))
-        .then(image => {
-            console.log('exported file: ' + 'imgExported.jpeg');
-        }));
+        //.then(image => (image.quality(100).write('imgExported.jpeg')))
+        .then(image=> image.quality(100).getBase64(jimp.AUTO, (err, res) => {
+            callback(res);
+        })));
     }
     catch (error) {
         console.error(error);
