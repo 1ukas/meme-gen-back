@@ -7,11 +7,11 @@ module.exports.generateImage = (data, callback) => {
     try {
         if (data.length == 0) throw new Error('data is empty');
 
+        // load the image as a buffer:
         const buff = Buffer.from(data.imageData, 'base64');
         jimp.read(buff)
-        .then(image => setImageFontSize(image)
+        .then(image => setImageFontSize(image) // get the fitting font size based on the image size
         .then(font => {
-            //image.rgba(false);
             const placementX = 0;
             const topPlacementY = imageHeight*0.02; // 2% top margin
             const bottomPlacementY = imageHeight - (imageHeight*0.02); // 2% bottom margin
@@ -20,8 +20,9 @@ module.exports.generateImage = (data, callback) => {
 
             // separate the top text so it wraps in the image:
             lines = getTextWrap(data.topText, font, marginedWidth);
-            console.log(lines);
+            // console.log(lines);
 
+            // print the top text on the image:
             image.print(font, placementX, topPlacementY, 
             {
                 text: data.topText,
@@ -30,7 +31,7 @@ module.exports.generateImage = (data, callback) => {
 
             // separate the bottom text so it wraps in the image:
             lines = getTextWrap(data.bottomText, font, marginedWidth);
-            console.log(lines);
+            // console.log(lines);
 
             // get the bottom text height margin:
             let lineHeight = 0;
@@ -38,24 +39,26 @@ module.exports.generateImage = (data, callback) => {
                 lineHeight += jimp.measureTextHeight(font, element, imageWidth);
             });
 
+            // print the bottom text on the image:
             return image.print(font, placementX, bottomPlacementY - lineHeight, 
             {
                 text: data.bottomText,
                 alignmentX: jimp.HORIZONTAL_ALIGN_CENTER
             }, marginedWidth, imageHeight)
         })
-        //.then(image => (image.quality(100).write('imgExported.jpeg')))
+        // encode the image as a base64 string and return it in the callback:
         .then(image=> image.quality(100).getBase64(jimp.AUTO, (err, res) => {
             callback(res);
         })));
     }
     catch (error) {
         console.error(error);
-        callback(0);
+        callback(false);
     }
 }
 
 const setImageFontSize = (image) => {
+    // Determine the font size that is going to be used based on the width of the image:
     imageWidth = image.bitmap.width;
     imageHeight = image.bitmap.height;
     console.log(imageWidth);
@@ -74,6 +77,7 @@ const setImageFontSize = (image) => {
 }
 
 const getTextWrap = (text, font, imageWidth) => {
+    // Separate the text so it wraps in the image:
     let lines = [];
     let width = 0;
     while ( text.length ) {
